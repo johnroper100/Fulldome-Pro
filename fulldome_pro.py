@@ -94,7 +94,9 @@ class FPSetupPreview(Operator):
             obj = bpy.data.objects.new("Dome Preview", mesh_data)
 
             scene.objects.link(obj)
-            for ob in context.scene.objects: ob.select=False
+            for ob in context.scene.objects:
+                ob.select = False
+
             obj.select = True
 
             mat_name = "Fulldome Material"
@@ -119,6 +121,12 @@ class FPSetupPreview(Operator):
             node3 = nodes.new(type='ShaderNodeTexImage')
             node3.location = 200, 0
             node3.image = image
+            if scene.FP_preview_type == 'still':
+                image.source = 'FILE'
+            elif scene.FP_preview_type == 'sequence':
+                image.source = 'SEQUENCE'
+            elif scene.FP_preview_type == 'movie':
+                image.source = 'MOVIE'
 
             link = links.new(node3.outputs[0], node1.inputs[0])
             link = links.new(node1.outputs[0], node2.inputs[0])
@@ -160,18 +168,35 @@ class FPPanel(Panel):
         layout = self.layout
 
         if bpy.context.scene.render.engine == "CYCLES":
-            row = layout.row()
+            box = layout.box()
+
+            row = box.row()
             row.prop(scene, "FP_quality", icon='SETTINGS')
 
-            row = layout.row()
+            row = box.row()
             row.scale_y = 1.2
             row.operator("scene.fp_setup_scene", icon='FILE_TICK')
 
-            row = layout.row()
-            row.prop(scene, "FP_preview_image", icon='SETTINGS')
+            box = layout.box()
 
-            row = layout.row()
-            row.scale_y = 1.1
+            row = box.row()
+            if scene.FP_preview_type == 'still':
+                row.prop(scene, "FP_preview_type", icon='IMAGE_DATA')
+            elif scene.FP_preview_type == 'sequence':
+                row.prop(scene, "FP_preview_type", icon='RENDER_ANIMATION')
+            elif scene.FP_preview_type == 'movie':
+                row.prop(scene, "FP_preview_type", icon='RENDER_ANIMATION')
+
+            row = box.row()
+            if scene.FP_preview_type == 'still':
+                row.prop(scene, "FP_preview_image", text="Image")
+            elif scene.FP_preview_type == 'sequence':
+                row.prop(scene, "FP_preview_image", text="First Frame")
+            elif scene.FP_preview_type == 'movie':
+                row.prop(scene, "FP_preview_image", text="Movie")
+
+            row = box.row()
+            row.scale_y = 1.2
             row.operator("scene.fp_setup_preview", icon='IMAGE_COL')
         else:
             row = layout.row()
@@ -189,7 +214,14 @@ def register():
         name="Quality",
         description="The output image size",
         default="high")
-    bpy.types.Scene.FP_preview_image = bpy.props.StringProperty (name="Assets Zip", default="", description="Define the assets zip file", subtype='FILE_PATH')
+    bpy.types.Scene.FP_preview_type = bpy.props.EnumProperty(
+        items=[('still', 'Still Image', 'Still image preview'),
+               ('sequence', 'Image Sequence', 'Image sequence preview'),
+               ('movie', 'Movie', 'Video file preview')],
+        name="Preview Type",
+        description="The type of media to preview",
+        default='still')
+    bpy.types.Scene.FP_preview_image = bpy.props.StringProperty(name="Preview Media", description="The fulldome image that you want to preview", subtype='FILE_PATH')
 
 
 def unregister():
