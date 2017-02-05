@@ -95,7 +95,7 @@ class FPSetupPreview(Operator):
 
             scene.objects.link(obj)
             obj.select = True
-            
+
             mat_name = "Fulldome Material"
             mat = (bpy.data.materials.get(mat_name) or bpy.data.materials.new(mat_name))
             mat.use_nodes = True
@@ -105,22 +105,39 @@ class FPSetupPreview(Operator):
 
             for node in nodes:
                 nodes.remove(node)
-            
+
             node1 = nodes.new('ShaderNodeEmission')
             node1.location = 100, 0
-            
+
             node2 = nodes.new('ShaderNodeOutputMaterial')
             node2.location = 0, 0
 
             previewImage = os.path.abspath(scene.FP_preview_image)
             image = bpy.data.images.load(previewImage, check_existing=True)
-            
+
             node3 = nodes.new(type='ShaderNodeTexImage')
             node3.location = 200, 0
             node3.image = image
-            
+
             link = links.new(node3.outputs[0], node1.inputs[0])
             link = links.new(node1.outputs[0], node2.inputs[0])
+
+            if obj.data.materials:
+                # assign to 1st material slot
+                obj.data.materials[0] = mat
+            else:
+                # no slots
+                obj.data.materials.append(mat)
+
+            context.space_data.viewport_shade = 'MATERIAL'
+
+            #for area in bpy.context.screen.areas:
+             #   if area.type == 'VIEW_3D':
+              #      for region in area.regions:
+               #         if region.type == 'WINDOW':
+                #            override = {'area': area, 'region': region, 'edit_object': bpy.context.edit_object}
+                 #           bpy.ops.uv.unwrap(override)
+
         else:
             self.report({'ERROR'}, "You must enable Cycles to use Fulldome Pro!")
 
@@ -153,7 +170,7 @@ class FPPanel(Panel):
 
             row = layout.row()
             row.prop(scene, "FP_preview_image", icon='SETTINGS')
-    
+
             row = layout.row()
             row.scale_y = 1.1
             row.operator("scene.fp_setup_preview", icon='IMAGE_COL')
@@ -173,13 +190,7 @@ def register():
         name="Quality",
         description="The output image size",
         default="high")
-    bpy.types.Scene.FP_preview_image = bpy.props.StringProperty \
-      (
-      name = "Assets Zip",
-      default = "",
-      description = "Define the assets zip file",
-      subtype = 'FILE_PATH'
-      )
+    bpy.types.Scene.FP_preview_image = bpy.props.StringProperty (name="Assets Zip", default="", description="Define the assets zip file", subtype='FILE_PATH')
 
 
 def unregister():
