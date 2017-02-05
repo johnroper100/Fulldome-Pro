@@ -125,8 +125,10 @@ class FPSetupPreview(Operator):
                 image.source = 'FILE'
             elif scene.FP_preview_type == 'sequence':
                 image.source = 'SEQUENCE'
+                node3.image_user.frame_duration = scene.FP_preview_length
             elif scene.FP_preview_type == 'movie':
                 image.source = 'MOVIE'
+                node3.image_user.frame_duration = scene.FP_preview_length
 
             link = links.new(node3.outputs[0], node1.inputs[0])
             link = links.new(node1.outputs[0], node2.inputs[0])
@@ -190,8 +192,14 @@ class FPPanel(Panel):
                 row.prop(scene, "FP_preview_image", text="Image")
             elif scene.FP_preview_type == 'sequence':
                 row.prop(scene, "FP_preview_image", text="First Frame")
+
+                row = box.row()
+                row.prop(scene, "FP_preview_length", icon='TIME')
             elif scene.FP_preview_type == 'movie':
                 row.prop(scene, "FP_preview_image", text="Movie")
+
+                row = box.row()
+                row.prop(scene, "FP_preview_length", icon='TIME')
 
             row = box.row()
             row.scale_y = 1.2
@@ -205,21 +213,22 @@ def register():
     bpy.utils.register_class(FPSetupScene)
     bpy.utils.register_class(FPSetupPreview)
     bpy.utils.register_class(FPPanel)
-    bpy.types.Scene.FP_quality = bpy.props.EnumProperty(
+    bpy.types.Scene.FP_quality = EnumProperty(
         items=[('high', 'High', '4k image quality'),
                ('medium', 'Medium', '2k image quality'),
                ('low', 'Low', 'HD image quality')],
         name="Quality",
         description="The output image size",
         default="high")
-    bpy.types.Scene.FP_preview_type = bpy.props.EnumProperty(
+    bpy.types.Scene.FP_preview_type = EnumProperty(
         items=[('still', 'Still Image', 'Still image preview'),
                ('sequence', 'Image Sequence', 'Image sequence preview'),
                ('movie', 'Movie', 'Video file preview')],
         name="Preview Type",
         description="The type of media to preview",
         default='still')
-    bpy.types.Scene.FP_preview_image = bpy.props.StringProperty(name="Preview Media", description="The fulldome image that you want to preview", subtype='FILE_PATH')
+    bpy.types.Scene.FP_preview_image = StringProperty(name="Preview Media", description="The fulldome image that you want to preview", subtype='FILE_PATH')
+    bpy.types.Scene.FP_preview_length = IntProperty(name="Frames", description="The length (in frames) of the fulldome preview", default=1)
 
 
 def unregister():
@@ -229,6 +238,7 @@ def unregister():
 
     del bpy.types.Scene.FP_quality
     del bpy.types.Scene.FP_preview_image
+    del bpy.types.Scene.FP_preview_length
 
 
 if __name__ == "__main__":
