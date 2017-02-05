@@ -110,7 +110,7 @@ class FPSetupPreview(Operator):
                 nodes.remove(node)
 
             node1 = nodes.new('ShaderNodeEmission')
-            node1.location = 100, 0
+            node1.location = -200, 0
 
             node2 = nodes.new('ShaderNodeOutputMaterial')
             node2.location = 0, 0
@@ -119,7 +119,7 @@ class FPSetupPreview(Operator):
             image = bpy.data.images.load(previewImage, check_existing=True)
 
             node3 = nodes.new(type='ShaderNodeTexImage')
-            node3.location = 200, 0
+            node3.location = -400, 0
             node3.image = image
             if scene.FP_preview_type == 'still':
                 image.source = 'FILE'
