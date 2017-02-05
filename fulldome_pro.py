@@ -94,6 +94,7 @@ class FPSetupPreview(Operator):
             obj = bpy.data.objects.new("Dome Preview", mesh_data)
 
             scene.objects.link(obj)
+            for ob in context.scene.objects: ob.select=False
             obj.select = True
 
             mat_name = "Fulldome Material"
@@ -131,12 +132,10 @@ class FPSetupPreview(Operator):
 
             context.space_data.viewport_shade = 'MATERIAL'
 
-            #for area in bpy.context.screen.areas:
-             #   if area.type == 'VIEW_3D':
-              #      for region in area.regions:
-               #         if region.type == 'WINDOW':
-                #            override = {'area': area, 'region': region, 'edit_object': bpy.context.edit_object}
-                 #           bpy.ops.uv.unwrap(override)
+            scene.objects.active = obj
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
+            bpy.ops.object.mode_set(mode='OBJECT')
 
         else:
             self.report({'ERROR'}, "You must enable Cycles to use Fulldome Pro!")
