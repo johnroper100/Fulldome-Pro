@@ -71,6 +71,22 @@ class FPSetupScene(Operator):
         return {'FINISHED'}
 
 
+class FPSetupPreview(Operator):
+    """Setup a fulldome preview scene"""
+    bl_idname = "scene.fp_setup_preview"
+    bl_label = "Setup Fulldome Preview"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if bpy.context.scene.render.engine == "CYCLES":
+            scene = bpy.context.scene
+            print("Preview set up!")
+        else:
+            self.report({'ERROR'}, "You must enable Cycles to use Fulldome Pro!")
+
+        return {'FINISHED'}
+
+
 class FPPanel(Panel):
     """Creates Fulldome Pro Panel in the tools panel."""
     bl_idname = "FPPanel"
@@ -94,6 +110,10 @@ class FPPanel(Panel):
             row = layout.row()
             row.scale_y = 1.2
             row.operator("scene.fp_setup_scene", icon='FILE_TICK')
+
+            #row = layout.row()
+            #row.scale_y = 1.1
+            #row.operator("scene.fp_setup_preview", icon='IMAGE_COL')
         else:
             row = layout.row()
             row.label("You must enable Cycles to use Fulldome Pro!", icon='ERROR')
@@ -101,6 +121,7 @@ class FPPanel(Panel):
 
 def register():
     bpy.utils.register_class(FPSetupScene)
+    bpy.utils.register_class(FPSetupPreview)
     bpy.utils.register_class(FPPanel)
     bpy.types.Scene.FP_quality = bpy.props.EnumProperty(
         items=[('high', 'High', '4k image quality'),
@@ -113,6 +134,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(FPSetupScene)
+    bpy.utils.unregister_class(FPSetupPreview)
     bpy.utils.unregister_class(FPPanel)
 
     del bpy.types.Scene.FP_quality
