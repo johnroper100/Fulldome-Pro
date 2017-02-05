@@ -132,10 +132,8 @@ class FPSetupPreview(Operator):
             link = links.new(node1.outputs[0], node2.inputs[0])
 
             if obj.data.materials:
-                # assign to 1st material slot
                 obj.data.materials[0] = mat
             else:
-                # no slots
                 obj.data.materials.append(mat)
 
             context.space_data.viewport_shade = 'MATERIAL'
