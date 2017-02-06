@@ -31,6 +31,7 @@ bl_info = {
 
 import bpy
 import os
+import math
 from bpy.types import Operator, Panel
 from bpy.props import *
 
@@ -62,7 +63,7 @@ class FPSetupScene(Operator):
             cam = bpy.data.cameras.new("Fulldome Camera")
             cam.type = 'PANO'
             cam.cycles.panorama_type = 'FISHEYE_EQUIDISTANT'
-            cam.cycles.fisheye_fov = scene.FP_fov
+            cam.cycles.fisheye_fov = math.pi * scene.FP_fov / 180
             cam_ob = bpy.data.objects.new("Fulldome Camera", cam)
             cam_ob.rotation_euler = (1.5707963705062866, 0, 0)
             scene.objects.link(cam_ob)
@@ -226,7 +227,7 @@ def register():
         name="Quality",
         description="The output image size",
         default="high")
-    bpy.types.Scene.FP_fov = FloatProperty(name="Field of View", description="The field of view of the fulldome camera", default=180)
+    bpy.types.Scene.FP_fov = FloatProperty(name="Field of View", description="The field of view of the fulldome camera", default=18)
     bpy.types.Scene.FP_preview_type = EnumProperty(
         items=[('still', 'Still Image', 'Still image preview'),
                ('sequence', 'Image Sequence', 'Image sequence preview'),
