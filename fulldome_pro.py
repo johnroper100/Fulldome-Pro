@@ -62,6 +62,7 @@ class FPSetupScene(Operator):
             cam = bpy.data.cameras.new("Fulldome Camera")
             cam.type = 'PANO'
             cam.cycles.panorama_type = 'FISHEYE_EQUIDISTANT'
+            cam.cycles.fisheye_fov = scene.FP_fov
             cam_ob = bpy.data.objects.new("Fulldome Camera", cam)
             cam_ob.rotation_euler = (1.5707963705062866, 0, 0)
             scene.objects.link(cam_ob)
@@ -176,6 +177,9 @@ class FPPanel(Panel):
             row.prop(scene, "FP_quality", icon='SETTINGS')
 
             row = box.row()
+            row.prop(scene, "FP_fov")
+
+            row = box.row()
             row.scale_y = 1.2
             row.operator("scene.fp_setup_scene", icon='FILE_TICK')
 
@@ -222,6 +226,7 @@ def register():
         name="Quality",
         description="The output image size",
         default="high")
+    bpy.types.Scene.FP_fov = FloatProperty(name="Field of View", description="The field of view of the fulldome camera", default=180)
     bpy.types.Scene.FP_preview_type = EnumProperty(
         items=[('still', 'Still Image', 'Still image preview'),
                ('sequence', 'Image Sequence', 'Image sequence preview'),
@@ -239,6 +244,8 @@ def unregister():
     bpy.utils.unregister_class(FPPanel)
 
     del bpy.types.Scene.FP_quality
+    del bpy.types.Scene.FP_fov
+    del bpy.types.Scene.FP_preview_type
     del bpy.types.Scene.FP_preview_image
     del bpy.types.Scene.FP_preview_length
 
