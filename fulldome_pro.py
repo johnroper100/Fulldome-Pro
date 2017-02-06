@@ -126,9 +126,11 @@ class FPSetupPreview(Operator):
             elif scene.FP_preview_type == 'sequence':
                 image.source = 'SEQUENCE'
                 node3.image_user.frame_duration = scene.FP_preview_length
+                node3.image_user.use_auto_refresh = True
             elif scene.FP_preview_type == 'movie':
                 image.source = 'MOVIE'
                 node3.image_user.frame_duration = scene.FP_preview_length
+                node3.image_user.use_auto_refresh = True
 
             link = links.new(node3.outputs[0], node1.inputs[0])
             link = links.new(node1.outputs[0], node2.inputs[0])
