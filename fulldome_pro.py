@@ -91,7 +91,7 @@ class FPSetupPreview(Operator):
             mesh_data.from_pydata(verts, [], faces)
             mesh_data.update()
 
-            obj = bpy.data.objects.new("Dome Preview", mesh_data)
+            obj = bpy.data.objects.new("Fulldome Preview", mesh_data)
 
             scene.objects.link(obj)
             for ob in context.scene.objects:
@@ -99,7 +99,7 @@ class FPSetupPreview(Operator):
 
             obj.select = True
 
-            mat_name = "Fulldome Material"
+            mat_name = "Fulldome Preview Material"
             mat = (bpy.data.materials.get(mat_name) or bpy.data.materials.new(mat_name))
             mat.use_nodes = True
             tree = mat.node_tree
