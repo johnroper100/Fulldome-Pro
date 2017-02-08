@@ -65,7 +65,8 @@ class FPSetupScene(Operator):
             cam.cycles.panorama_type = 'FISHEYE_EQUIDISTANT'
             cam.cycles.fisheye_fov = math.pi * scene.FP_fov / 180
             cam_ob = bpy.data.objects.new("Fulldome Camera", cam)
-            cam_ob.rotation_euler = (1.5707963705062866, 0, 0)
+            cam_ob.rotation_euler = (3.1415929794311523, 0, 0)
+            cam_ob.location = (0.0, 0.0, -2.5)
             scene.objects.link(cam_ob)
             scene.camera = cam_ob
         else:
