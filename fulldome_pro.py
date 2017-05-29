@@ -45,7 +45,7 @@ class FPSetupScene(Operator):
     def execute(self, context):
         if bpy.context.scene.render.engine == "CYCLES":
             scene = bpy.context.scene
-            main_quality = 4096
+            main_quality = 8192
             if scene.FP_quality == 'high':
                 scene.render.resolution_x = main_quality
                 scene.render.resolution_y = main_quality
@@ -55,6 +55,9 @@ class FPSetupScene(Operator):
             elif scene.FP_quality == 'low':
                 scene.render.resolution_x = main_quality/4
                 scene.render.resolution_y = main_quality/4
+            elif scene.FP_quality == 'lower':
+                scene.render.resolution_x = main_quality/6
+                scene.render.resolution_y = main_quality/6
             else:
                 print("There is a problem with the quality variable. Did you try to enter a value other then high, medium, or low?")
 
@@ -222,9 +225,10 @@ def register():
     bpy.utils.register_class(FPSetupPreview)
     bpy.utils.register_class(FPPanel)
     bpy.types.Scene.FP_quality = EnumProperty(
-        items=[('high', 'High', '4k image quality'),
-               ('medium', 'Medium', '2k image quality'),
-               ('low', 'Low', 'HD image quality')],
+        items=[('high', 'High', '8k image quality'),
+               ('medium', 'Medium', '4k image quality'),
+               ('low', 'Low', '2k image quality'),
+               ('lower', 'Lower', 'HD image quality')],
         name="Quality",
         description="The output image size",
         default="high")
