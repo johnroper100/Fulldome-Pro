@@ -1,4 +1,4 @@
-# Copyright 2018 John Roper
+# Copyright 2019 John Roper
 #
 # ##### BEGIN GPL LICENSE BLOCK ######
 #
@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Fulldome Pro",
     "author": "John Roper",
-    "version": (1, 0, 0),
-    "blender": (2, 78, 0),
+    "version": (1, 1, 0),
+    "blender": (2, 80, 0),
     "location": "3D View > Toolbar > Tools > Fulldome Pro",
     "description": "Quicly set up your scene for fulldome production",
     "warning": "",
@@ -29,11 +29,12 @@ bl_info = {
     "category": "Render"
 }
 
-import bpy
-import os
 import math
-from bpy.types import Operator, Panel
+import os
+
+import bpy
 from bpy.props import *
+from bpy.types import Operator, Panel
 
 
 class FPSetupScene(Operator):
@@ -70,7 +71,7 @@ class FPSetupScene(Operator):
             cam_ob = bpy.data.objects.new("Fulldome Camera", cam)
             cam_ob.rotation_euler = (3.1415929794311523, 0, 0)
             cam_ob.location = (0.0, 0.0, -2.5)
-            scene.objects.link(cam_ob)
+            scene.collection.objects.link(cam_ob)
             scene.camera = cam_ob
         else:
             self.report({'ERROR'}, "You must enable Cycles to use Fulldome Pro!")
@@ -99,11 +100,11 @@ class FPSetupPreview(Operator):
 
             obj = bpy.data.objects.new("Fulldome Preview", mesh_data)
 
-            scene.objects.link(obj)
+            scene.collection.objects.link(obj)
             for ob in context.scene.objects:
-                ob.select = False
+                ob.select_set(False)
 
-            obj.select = True
+            obj.select_set(True)
 
             mat_name = "Fulldome Preview Material"
             mat = (bpy.data.materials.get(mat_name) or bpy.data.materials.new(mat_name))
@@ -146,9 +147,7 @@ class FPSetupPreview(Operator):
             else:
                 obj.data.materials.append(mat)
 
-            context.space_data.viewport_shade = 'MATERIAL'
-
-            scene.objects.active = obj
+            context.view_layer.objects.active = obj
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
             bpy.ops.object.mode_set(mode='OBJECT')
@@ -164,7 +163,7 @@ class FPPanel(Panel):
     bl_idname = "FPPanel"
     bl_label = "Fulldome Pro"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_category = "Tools"
 
     def draw_header(self, context):
@@ -174,6 +173,7 @@ class FPPanel(Panel):
     def draw(self, context):
         scene = bpy.context.scene
         layout = self.layout
+        layout.use_property_split = True
 
         if bpy.context.scene.render.engine == "CYCLES":
             box = layout.box()
@@ -214,16 +214,22 @@ class FPPanel(Panel):
 
             row = box.row()
             row.scale_y = 1.2
-            row.operator("scene.fp_setup_preview", icon='IMAGE_COL')
+            row.operator("scene.fp_setup_preview", icon='IMAGE')
         else:
             row = layout.row()
-            row.label("You must enable Cycles to use Fulldome Pro!", icon='ERROR')
+            row.label(text="You must enable Cycles to use Fulldome Pro!", icon='ERROR')
 
+classes = (
+    FPSetupScene,
+    FPSetupPreview,
+    FPPanel,
+)
 
 def register():
-    bpy.utils.register_class(FPSetupScene)
-    bpy.utils.register_class(FPSetupPreview)
-    bpy.utils.register_class(FPPanel)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
     bpy.types.Scene.FP_quality = EnumProperty(
         items=[('high', 'High', '8k image quality'),
                ('medium', 'Medium', '4k image quality'),
@@ -245,9 +251,9 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_class(FPSetupScene)
-    bpy.utils.unregister_class(FPSetupPreview)
-    bpy.utils.unregister_class(FPPanel)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
     del bpy.types.Scene.FP_quality
     del bpy.types.Scene.FP_fov
