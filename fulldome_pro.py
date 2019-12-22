@@ -167,9 +167,9 @@ class FPSetupPreview(Operator):
         return {'FINISHED'}
 
 
-class FPPanel_PT_Panel(Panel):
+class FPPANEL_PT_Panel(Panel):
     """Creates Fulldome Pro Panel in the tools panel."""
-    bl_idname = "FPPanel_PT_Panel"
+    bl_idname = "FPPANEL_PT_Panel"
     bl_label = "Fulldome Pro"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -231,7 +231,7 @@ class FPPanel_PT_Panel(Panel):
 classes = (
     FPSetupScene,
     FPSetupPreview,
-    FPPanel_PT_Panel,
+    FPPANEL_PT_Panel,
 )
 
 def register():
