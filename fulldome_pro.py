@@ -233,11 +233,11 @@ def register():
     bpy.types.Scene.FP_quality = EnumProperty(
         items=[('high', 'High', '8k image quality'),
                ('medium', 'Medium', '4k image quality'),
-               ('low', 'Low', '2k image quality'),
+               ('low', 'Low/Standard', '2k image quality'),
                ('lower', 'Lower', 'HD image quality')],
         name="Quality",
         description="The output image size",
-        default="high")
+        default="low")
     bpy.types.Scene.FP_fov = FloatProperty(name="Field of View", description="The field of view of the fulldome camera", default=180)
     bpy.types.Scene.FP_preview_type = EnumProperty(
         items=[('still', 'Still Image', 'Still image preview'),
