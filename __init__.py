@@ -1,4 +1,4 @@
-# Copyright 2019 John Roper
+# Copyright 2020 John Roper
 #
 # ##### BEGIN GPL LICENSE BLOCK ######
 #
@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Fulldome Pro",
     "author": "John Roper",
-    "version": (1, 1, 0),
+    "version": (1, 1, 5),
     "blender": (2, 80, 0),
     "location": "3D View > Toolbar > Tools > Fulldome Pro",
     "description": "Quicly set up your scene for fulldome production",
