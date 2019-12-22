@@ -64,6 +64,15 @@ class FPSetupScene(Operator):
 
             scene.render.resolution_percentage = 100
 
+            scene.render.use_stamp_date = False
+            scene.render.use_stamp_time = True
+            scene.render.use_stamp_render_time = False
+            scene.render.use_stamp_frame = True
+            scene.render.use_stamp_camera = False
+            scene.render.use_stamp_scene = False
+            scene.render.use_stamp_filename = False
+            scene.render.use_stamp = True
+
             cam = bpy.data.cameras.new("Fulldome Camera")
             cam.type = 'PANO'
             cam.cycles.panorama_type = 'FISHEYE_EQUIDISTANT'
