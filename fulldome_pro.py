@@ -47,20 +47,20 @@ class FPSetupScene(Operator):
         if bpy.context.scene.render.engine == "CYCLES":
             scene = bpy.context.scene
             main_quality = 8192
-            if scene.FP_quality == 'high':
+            if scene.FP_quality == 'ultra':
                 scene.render.resolution_x = main_quality
                 scene.render.resolution_y = main_quality
-            elif scene.FP_quality == 'medium':
+            elif scene.FP_quality == 'high':
                 scene.render.resolution_x = main_quality/2
                 scene.render.resolution_y = main_quality/2
-            elif scene.FP_quality == 'low':
+            elif scene.FP_quality == 'medium':
                 scene.render.resolution_x = main_quality/4
                 scene.render.resolution_y = main_quality/4
-            elif scene.FP_quality == 'lower':
+            elif scene.FP_quality == 'low':
                 scene.render.resolution_x = main_quality/6
                 scene.render.resolution_y = main_quality/6
             else:
-                print("There is a problem with the quality variable. Did you try to enter a value other then high, medium, or low?")
+                print("There is a problem with the quality variable. Did you try to enter a value other then ultra, high, medium, or low?")
 
             scene.render.resolution_percentage = 100
 
@@ -240,13 +240,13 @@ def register():
         register_class(cls)
 
     bpy.types.Scene.FP_quality = EnumProperty(
-        items=[('high', 'High', '8k image quality'),
-               ('medium', 'Medium', '4k image quality'),
-               ('low', 'Low/Standard', '2k image quality'),
-               ('lower', 'Lower', 'HD image quality')],
+        items=[('ultra', 'Ultra', '8k image quality'),
+               ('high', 'High', '4k image quality'),
+               ('medium', 'Standard/Medium', '2k image quality'),
+               ('low', 'Low', 'HD image quality')],
         name="Quality",
         description="The output image size",
-        default="low")
+        default="medium")
     bpy.types.Scene.FP_fov = FloatProperty(name="Field of View", description="The field of view of the fulldome camera", default=180)
     bpy.types.Scene.FP_preview_type = EnumProperty(
         items=[('still', 'Still Image', 'Still image preview'),
