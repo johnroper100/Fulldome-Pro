@@ -46,6 +46,7 @@ class FPSetupScene(Operator):
     def execute(self, context):
         if bpy.context.scene.render.engine == "CYCLES":
             scene = bpy.context.scene
+
             main_quality = 8192
             if scene.FP_quality == 'ultra':
                 scene.render.resolution_x = main_quality
@@ -77,9 +78,20 @@ class FPSetupScene(Operator):
             cam.type = 'PANO'
             cam.cycles.panorama_type = 'FISHEYE_EQUIDISTANT'
             cam.cycles.fisheye_fov = math.pi * scene.FP_fov / 180
+            
+            backgroundImage = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fulldome_background_guide.png")
+            background = bpy.data.images.load(backgroundImage, check_existing=True)
+
             cam_ob = bpy.data.objects.new("Fulldome Camera", cam)
             cam_ob.rotation_euler = (3.1415929794311523, 0, 0)
             cam_ob.location = (0.0, 0.0, -2.5)
+
+            cam_ob.data.show_background_images = True
+            bg = cam_ob.data.background_images.new()
+            bg.display_depth = 'FRONT'
+            bg.alpha = 0.1
+            bg.image = background
+
             scene.collection.objects.link(cam_ob)
             scene.camera = cam_ob
         else:
