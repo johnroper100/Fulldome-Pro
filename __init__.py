@@ -89,7 +89,7 @@ class FPSetupScene(Operator):
             cam_ob.data.show_background_images = True
             bg = cam_ob.data.background_images.new()
             bg.display_depth = 'FRONT'
-            bg.alpha = 0.1
+            bg.alpha = 1
             bg.image = background
 
             scene.collection.objects.link(cam_ob)
