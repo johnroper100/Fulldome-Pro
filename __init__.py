@@ -99,6 +99,62 @@ class FPSetupScene(Operator):
 
         return {'FINISHED'}
 
+class FPSetupVRScene(Operator):
+    """Setup a 3D VR scene"""
+    bl_idname = "scene.fp_setup_vr_scene"
+    bl_label = "Setup 3D VR Scene"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if bpy.context.scene.render.engine == "CYCLES":
+            scene = bpy.context.scene
+
+            main_quality = 6144
+            if scene.FP_quality == 'ultra':
+                scene.render.resolution_x = main_quality
+                scene.render.resolution_y = (main_quality/2)
+            elif scene.FP_quality == 'high':
+                scene.render.resolution_x = main_quality/1.5
+                scene.render.resolution_y = (main_quality/2)/1.5
+            elif scene.FP_quality == 'medium':
+                scene.render.resolution_x = main_quality/1.6
+                scene.render.resolution_y = (main_quality/2)/1.6
+            elif scene.FP_quality == 'low':
+                scene.render.resolution_x = main_quality/2
+                scene.render.resolution_y = (main_quality/2)/2
+            else:
+                print("There is a problem with the quality variable. Did you try to enter a value other then ultra, high, medium, or low?")
+
+            scene.render.resolution_percentage = 100
+            scene.render.fps = 30
+
+            scene.render.use_stamp_date = False
+            scene.render.use_stamp_time = False
+            scene.render.use_stamp_render_time = False
+            scene.render.use_stamp_frame = False
+            scene.render.use_stamp_camera = False
+            scene.render.use_stamp_scene = False
+            scene.render.use_stamp_filename = False
+            scene.render.use_stamp = False
+
+            scene.render.use_multiview = True
+            scene.render.image_settings.views_format = 'STEREO_3D'
+            #scene.display_mode = 'TOPBOTTOM'
+
+            cam = bpy.data.cameras.new("3D VR Camera")
+            cam.type = 'PANO'
+            cam.cycles.panorama_type = 'EQUIRECTANGULAR'
+
+            cam_ob = bpy.data.objects.new("3D VR Camera", cam)
+            cam_ob.location = (0.0, 0.0, 0.0)
+
+            scene.collection.objects.link(cam_ob)
+            scene.camera = cam_ob
+        else:
+            self.report({'ERROR'}, "You must enable Cycles to use Fulldome Pro!")
+
+        return {'FINISHED'}
+
 
 class FPSetupPreview(Operator):
     """Setup a fulldome preview scene"""
@@ -209,6 +265,10 @@ class FPPANEL_PT_Panel(Panel):
             row.scale_y = 1.2
             row.operator("scene.fp_setup_scene", icon='FILE_TICK')
 
+            row = box.row()
+            row.scale_y = 1.2
+            row.operator("scene.fp_setup_vr_scene", icon='FILE_TICK')
+
             box = layout.box()
 
             row = box.row()
@@ -242,6 +302,7 @@ class FPPANEL_PT_Panel(Panel):
 
 classes = (
     FPSetupScene,
+    FPSetupVRScene,
     FPSetupPreview,
     FPPANEL_PT_Panel,
 )
